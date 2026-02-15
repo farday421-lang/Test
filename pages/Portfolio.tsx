@@ -135,6 +135,17 @@ export const PortfolioView: React.FC = () => {
     loadPortfolio();
   }, [username]);
 
+  useEffect(() => {
+    if (portfolio) {
+      document.title = `${portfolio.displayName} | FolioCraft`;
+    } else {
+      document.title = 'FolioCraft AI';
+    }
+    return () => {
+      document.title = 'FolioCraft AI';
+    }
+  }, [portfolio]);
+
   if (loading) return <div className="h-screen flex items-center justify-center">Loading...</div>;
   if (!portfolio) return <div className="h-screen flex items-center justify-center flex-col gap-4">
     <h1 className="text-2xl font-bold text-gray-800">Portfolio Not Found</h1>

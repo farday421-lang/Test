@@ -5,7 +5,7 @@ import { gemini } from '../services/geminiService';
 import { Portfolio, Project } from '../types';
 import { Button } from '../components/ui/Button';
 import { Input, TextArea } from '../components/ui/Input';
-import { Plus, Trash2, Wand2, Eye, Save, Share2, Upload, Layout, UserCircle, Briefcase } from 'lucide-react';
+import { Plus, Trash2, Wand2, Eye, Save, Share2, Upload, Layout, UserCircle, Briefcase, Globe, Copy, Check, ExternalLink } from 'lucide-react';
 
 const TABS = [
   { id: 'profile', label: 'Profile', icon: UserCircle },
@@ -19,6 +19,7 @@ export const Builder: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [aiLoading, setAiLoading] = useState(false);
+  const [copied, setCopied] = useState(false);
   
   // Portfolio State
   const [portfolio, setPortfolio] = useState<Portfolio>({
@@ -32,6 +33,14 @@ export const Builder: React.FC = () => {
     socialLinks: {},
     isPublished: false
   });
+
+  const fullUrl = user ? `${window.location.origin}/#/p/${user.username}` : '';
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(fullUrl);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   useEffect(() => {
     const loadData = async () => {
@@ -194,6 +203,35 @@ export const Builder: React.FC = () => {
             
             {activeTab === 'profile' && (
               <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                
+                {portfolio.isPublished && (
+                  <section className="bg-green-50 dark:bg-green-900/20 p-6 rounded-2xl border border-green-200 dark:border-green-800 mb-6">
+                    <div className="flex items-start justify-between mb-4">
+                      <div>
+                        <h3 className="text-lg font-semibold text-green-800 dark:text-green-300">Your Portfolio is Live!</h3>
+                        <p className="text-green-600 dark:text-green-400 text-sm">Share this URL with the world.</p>
+                      </div>
+                      <div className="h-10 w-10 bg-green-100 dark:bg-green-800 rounded-full flex items-center justify-center text-green-600 dark:text-green-300">
+                        <Globe className="w-6 h-6" />
+                      </div>
+                    </div>
+                    
+                    <div className="flex gap-2">
+                      <div className="flex-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-600 dark:text-slate-300 font-mono truncate select-all flex items-center">
+                        {fullUrl}
+                      </div>
+                      <Button variant="outline" size="sm" onClick={handleCopy} className="shrink-0 bg-white dark:bg-slate-800" title="Copy Link">
+                        {copied ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4" />}
+                      </Button>
+                      <a href={fullUrl} target="_blank" rel="noopener noreferrer">
+                        <Button variant="primary" size="sm" className="shrink-0" title="Open in new tab">
+                          <ExternalLink className="w-4 h-4" />
+                        </Button>
+                      </a>
+                    </div>
+                  </section>
+                )}
+
                 <section className="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700">
                   <h2 className="text-lg font-medium mb-4 text-slate-900 dark:text-white">Personal Details</h2>
                   <div className="grid md:grid-cols-2 gap-4">
